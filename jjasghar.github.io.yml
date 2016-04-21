@@ -1,0 +1,19 @@
+- job:
+    name: jjasghar.github.io
+    project-type: freestyle
+    description: 'verify that the jjasghar.github.io is in a state to push'
+    scm:
+    - git:
+        skip-tag: false
+        url: git@github.com:jjasghar/jjasghar.github.io.git
+    builders:
+        - shell: |
+            #!/bin/bash
+            source "$HOME/.rvm/scripts/rvm"
+            set -e
+            rvm use 2.2.0@jekyll --create
+            gem install bundle
+            bundle install
+            bundle exec jekyll build
+            bundle exec htmlproofer ./_site --allow-hash-href
+            rvm gemset delete 2.2.0@jekyll
