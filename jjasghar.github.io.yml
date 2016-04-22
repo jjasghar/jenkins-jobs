@@ -31,9 +31,8 @@
       - github-pull-request:
           admin-list:
             - jjasghar
-          cron: '* * * * *'
-          build-desc-template: "build description"
-          trigger-phrase: 'Rose, make it so.'
+          build-desc-template: "Building jjasghar.github.io"
+          trigger-phrase: 'Bad Wolf.'
           only-trigger-phrase: true
           github-hooks: true
           permit-all: false
