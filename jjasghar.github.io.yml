@@ -32,7 +32,7 @@
           admin-list:
             - jjasghar
           build-desc-template: "Building jjasghar.github.io"
-          trigger-phrase: 'Bad Wolf.'
+          trigger-phrase: 'Run Rose.'
           only-trigger-phrase: true
           github-hooks: true
           permit-all: false
