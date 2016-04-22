@@ -2,10 +2,13 @@
     name: jjasghar.github.io
     project-type: freestyle
     description: 'verify that the jjasghar.github.io is in a state to push'
+    properties:
+      - github:
+          url: http://github.com/jjasghar/jjasghar.github.io
     scm:
-    - git:
-        skip-tag: false
-        url: git@github.com:jjasghar/jjasghar.github.io.git
+      - git:
+         skip-tag: false
+         url: git@github.com:jjasghar/jjasghar.github.io.git
     builders:
         - shell: |
             #!/bin/bash
@@ -24,3 +27,19 @@
             - shell: |
                 #!/bin/bash
                 rvm gemset delete 2.2.0@jekyll
+    triggers:
+      - github-pull-request:
+          admin-list:
+            - jjasghar
+          cron: '* * * * *'
+          build-desc-template: "build description"
+          trigger-phrase: 'Make it so.'
+          only-trigger-phrase: true
+          github-hooks: true
+          permit-all: false
+          auto-close-on-fail: false
+          allow-whitelist-orgs-as-admins: true
+          white-list-target-branches:
+            - master
+      - pollscm:
+          cron: '* * * * *'
