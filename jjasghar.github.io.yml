@@ -17,3 +17,10 @@
             bundle exec jekyll build
             bundle exec htmlproofer ./_site --allow-hash-href
             rvm gemset delete 2.2.0@jekyll
+    wrappers:
+      - release:
+          keep-forever: false
+          post-fail:
+            - shell: |
+                #!/bin/bash
+                rvm gemset delete 2.2.0@jekyll
