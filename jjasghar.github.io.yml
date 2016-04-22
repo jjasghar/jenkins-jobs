@@ -33,13 +33,12 @@
             - jjasghar
           cron: '* * * * *'
           build-desc-template: "build description"
-          trigger-phrase: 'Make it so.'
+          trigger-phrase: 'Rose, make it so.'
           only-trigger-phrase: true
           github-hooks: true
           permit-all: false
           auto-close-on-fail: false
           allow-whitelist-orgs-as-admins: true
-          white-list-target-branches:
-            - master
-      - pollscm:
-          cron: '* * * * *'
+          success-comment: "Huzzah! Tested and good, :heart: Rose"
+          failure-comment: "Something didn't playout how we wanted, love Rose"
+          error-comment: "ERROR something errored, you should investigate, love Rose"
