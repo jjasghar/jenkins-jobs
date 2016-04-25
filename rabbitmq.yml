@@ -1,0 +1,43 @@
+- job:
+    name: rabbitmq
+    project-type: freestyle
+    description: 'verify that the rabbitmq is in a state to push'
+    properties:
+      - github:
+          url: http://github.com/jjasghar/rabbitmq
+    scm:
+      - git:
+         skip-tag: false
+         url: git@github.com:jjasghar/rabbitmq.git
+    builders:
+        - shell: |
+            #!/bin/bash
+            source "$HOME/.rvm/scripts/rvm"
+            set -e
+            rvm use 2.2.0@rabbitmq --create
+            gem install bundle
+            bundle install
+            bundle exec rake
+            rvm gemset delete 2.2.0@rabbitmq
+    wrappers:
+      - release:
+          keep-forever: false
+          post-fail:
+            - shell: |
+                #!/bin/bash
+                bundle exec kitchen list
+                rvm gemset delete 2.2.0@rabbitmq
+    triggers:
+      - github-pull-request:
+          admin-list:
+            - jjasghar
+          build-desc-template: "Building rabbitmq"
+          trigger-phrase: 'Run Rose.'
+          only-trigger-phrase: true
+          github-hooks: true
+          permit-all: false
+          auto-close-on-fail: false
+          allow-whitelist-orgs-as-admins: true
+          success-comment: "Huzzah! Tested and good, :heart: Rose"
+          failure-comment: "Something didn't playout how we wanted, love Rose"
+          error-comment: "ERROR something errored, you should investigate, love Rose"
