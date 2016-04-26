@@ -1,0 +1,46 @@
+- job:
+    name: minecraft-basic
+    project-type: freestyle
+    description: 'verify that the minecraft-basic is in a state to push'
+    properties:
+      - github:
+          url: http://github.com/jjasghar/minecraft-basic
+    scm:
+      - git:
+         url: git@github.com:jjasghar/minecraft-basic.git
+         wipe-workspace: false
+         clean: true
+    builders:
+        - shell: |
+            #!/bin/bash
+            source "$HOME/.rvm/scripts/rvm"
+            set -e
+            rvm --force gemset delete 2.2.0@minecraft-basic
+            rvm use 2.2.0@minecraft-basic --create
+            gem install bundle
+            bundle install
+            bundle exec rake
+    wrappers:
+      - workspace-cleanup
+      - release:
+          keep-forever: false
+          post-fail:
+            - shell: |
+                #!/bin/bash
+                bundle exec kitchen list
+                bundle exec kitchen destroy
+                rvm --force gemset delete 2.2.0@minecraft-basic
+    triggers:
+      - github-pull-request:
+          admin-list:
+            - jjasghar
+          build-desc-template: "Building minecraft-basic"
+          trigger-phrase: 'Run Rose.'
+          only-trigger-phrase: true
+          github-hooks: true
+          permit-all: false
+          auto-close-on-fail: false
+          allow-whitelist-orgs-as-admins: true
+          success-comment: "Huzzah! Tested and good, :heart: Rose"
+          failure-comment: "Something didn't playout how we wanted, love Rose"
+          error-comment: "ERROR something errored, you should investigate, love Rose"
