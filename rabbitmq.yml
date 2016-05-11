@@ -14,12 +14,13 @@
             #!/bin/bash
             source "$HOME/.rvm/scripts/rvm"
             set -e
+            rvm --force gemset delete 2.2.0@rabbitmq
             rvm use 2.2.0@rabbitmq --create
             gem install bundle
             bundle install
             bundle exec rake
-            rvm gemset delete 2.2.0@rabbitmq
     wrappers:
+      - workspace-cleanup
       - release:
           keep-forever: false
           post-fail:

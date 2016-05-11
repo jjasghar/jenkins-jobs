@@ -1,21 +1,22 @@
 - job:
-    name: lita-ambush
+    name: pxe_dust-cookbook
     project-type: freestyle
-    description: 'verify that the lita-ambush is in a state to push'
+    description: 'verify that the pxe_dust-cookbook is in a state to push'
     properties:
       - github:
-          url: http://github.com/jjasghar/lita-ambush
+          url: http://github.com/jjasghar/pxe_dust-cookbook
     scm:
       - git:
-         skip-tag: false
-         url: git@github.com:jjasghar/lita-ambush.git
+         url: git@github.com:jjasghar/pxe_dust-cookbook.git
+         wipe-workspace: false
+         clean: true
     builders:
         - shell: |
             #!/bin/bash
             source "$HOME/.rvm/scripts/rvm"
             set -e
-            rvm --force gemset delete 2.2.0@lita-ambush
-            rvm use 2.2.0@lita-ambush --create
+            rvm --force gemset delete 2.2.3@pxe_dust-cookbook
+            rvm use 2.2.3@pxe_dust-cookbook --create
             gem install bundle
             bundle install
             bundle exec rake
@@ -26,12 +27,14 @@
           post-fail:
             - shell: |
                 #!/bin/bash
-                rvm gemset delete 2.2.0@lita-ambush
+                bundle exec kitchen list
+                bundle exec kitchen destroy
+                rvm --force gemset delete 2.2.0@pxe_dust-cookbook
     triggers:
       - github-pull-request:
           admin-list:
             - jjasghar
-          build-desc-template: "Building lita-ambush"
+          build-desc-template: "Building pxe_dust-cookbook"
           trigger-phrase: 'Run Rose.'
           only-trigger-phrase: true
           github-hooks: true

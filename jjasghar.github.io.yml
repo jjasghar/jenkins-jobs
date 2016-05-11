@@ -14,13 +14,14 @@
             #!/bin/bash
             source "$HOME/.rvm/scripts/rvm"
             set -e
+            rvm gemset delete 2.2.0@jekyll
             rvm use 2.2.0@jekyll --create
             gem install bundle
             bundle install
             bundle exec jekyll build
             bundle exec htmlproofer ./_site --allow-hash-href
-            rvm gemset delete 2.2.0@jekyll
     wrappers:
+      - workspace-cleanup
       - release:
           keep-forever: false
           post-fail:
