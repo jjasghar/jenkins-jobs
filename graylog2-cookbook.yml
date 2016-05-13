@@ -17,29 +17,12 @@
             set -e
             rvm --force gemset delete 2.2.3@graylog2-cookbook
             rvm use 2.2.3@graylog2-cookbook --create
-            if [ -f Gemfile ] ; then
-              gem install bundle
-              bundle install
-              bundle exec foodcritic .
-              bundle exec rspec .
-              bundle exec rubocop .
-              bundle exec kitchen verify
-            else
-              # install needed packages
-              sudo apt-get update
-              sudo apt-get -y install build-essential liblzma-dev zlib1g-dev
+            gem install bundle
+            bundle install
+            bundle exec rake style:chef
+            bundle exec rake style:ruby
+            bundle exec rake spec
 
-              # install chefdk
-              chefdk=chefdk_0.13.21-1_amd64.deb
-              wget -nv -t 3 https://packages.chef.io/stable/ubuntu/12.04/$chefdk
-              sudo dpkg -i $chefdk
-              rm $chefdk
-
-              chef exec foodcritic .
-              chef exec rubocop .
-              chef exec rspec .
-              chef exec kitchen verify
-            fi
     wrappers:
       - workspace-cleanup
       - release:
@@ -47,15 +30,8 @@
           post-fail:
             - shell: |
                 #!/bin/bash
-                if [ -f Gemfile ] ; then
-                  bundle exec kitchen list
-                  bundle exec kitchen destroy
-                else
-                  chef exec kitchen list
-                  chef exec kitchen destroy
-                  sudo apt-remove --purge -y install build-essential liblzma-dev zlib1g-dev
-                fi
-
+                bundle exec kitchen list
+                bundle exec kitchen destroy
                 rvm --force gemset delete 2.2.0@graylog2-cookbook
     triggers:
       - github-pull-request:
